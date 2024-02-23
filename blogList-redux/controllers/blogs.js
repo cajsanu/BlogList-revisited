@@ -47,10 +47,10 @@ blogRouter.get('/:id', async (request, response) => {
 });
 
 blogRouter.post('/:id/like', async (request, response) => {
-  const blogFromDB = await Blog.findById(request.params.id);
+  const blogFromDB = await Blog.findById(request.params.id).populate('user', { username: 1, name: 1 });
   blogFromDB.likes += 1;
-  await blogFromDB.save();
-  response.status(201).end();
+  const likedBolg = await blogFromDB.save();
+  response.status(201).json(likedBolg);
 });
 
 blogRouter.put('/:id', async (request, response) => {

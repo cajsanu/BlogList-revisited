@@ -1,4 +1,7 @@
-export const Notification = ({ message }) => {
+import {  useSelector } from "react-redux"
+
+export const Notification = () => {
+  const message = useSelector((state) => state.notification)
   if (message === null) {
     return null
   }
