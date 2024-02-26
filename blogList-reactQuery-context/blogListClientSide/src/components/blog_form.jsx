@@ -1,19 +1,36 @@
-import { useState } from 'react'
+import { useState, useContext } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import NotificationContext from "../contexts/NotificationContext";
+import blogRequests from "../requests/blogs";
 
-const BlogForm = ({ createBlog }) => {
-  const [blogTitle, setBlogTitle] = useState('')
-  const [blogAuthor, setBlogAuthor] = useState('')
-  const [blogUrl, setBlogUrl] = useState('')
+const BlogForm = () => {
+  const [notification, notificationDispatch] = useContext(NotificationContext);
+  const [blogTitle, setBlogTitle] = useState("");
+  const [blogAuthor, setBlogAuthor] = useState("");
+  const [blogUrl, setBlogUrl] = useState("");
 
-  const addBlog = async (event) => {
-    event.preventDefault()
+  const queryClient = useQueryClient();
 
-    await createBlog({ title: blogTitle, author: blogAuthor, url: blogUrl })
+  const newBlogMutation = useMutation({
+    mutationFn: blogRequests.createBlog,
+    onSuccess: (data) => {
+      notificationDispatch({ type: "CREATE", payload: data.title });
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+    onError: () => {
+      notificationDispatch({ type: "ERROR", payload: "Cannot make new blog" });
+    },
+  });
 
-    setBlogTitle('')
-    setBlogAuthor('')
-    setBlogUrl('')
-  }
+  const addBlog = (event) => {
+    event.preventDefault();
+    const blogObject = { title: blogTitle, author: blogAuthor, url: blogUrl };
+    newBlogMutation.mutate(blogObject)
+
+    setBlogTitle("");
+    setBlogAuthor("");
+    setBlogUrl("");
+  };
 
   return (
     <div>
@@ -21,31 +38,31 @@ const BlogForm = ({ createBlog }) => {
       <form onSubmit={addBlog}>
         <div>
           <div>
-              title
+            title
             <input
               type="text"
-              placeholder='Blog title'
-              id='title'
+              placeholder="Blog title"
+              id="title"
               value={blogTitle}
               onChange={(event) => setBlogTitle(event.target.value)}
             />
           </div>
           <div>
-              author
+            author
             <input
               type="text"
-              placeholder='Blog author'
-              id='author'
+              placeholder="Blog author"
+              id="author"
               value={blogAuthor}
               onChange={(event) => setBlogAuthor(event.target.value)}
             />
           </div>
           <div>
-              URL
+            URL
             <input
               type="text"
-              placeholder='Blog url'
-              id='URL'
+              placeholder="Blog url"
+              id="URL"
               value={blogUrl}
               onChange={(event) => setBlogUrl(event.target.value)}
             />
@@ -54,7 +71,7 @@ const BlogForm = ({ createBlog }) => {
         <button type="submit">Save</button>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default BlogForm
+export default BlogForm;

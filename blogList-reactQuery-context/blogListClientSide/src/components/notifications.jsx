@@ -1,13 +1,18 @@
-export const Notification = ({ message }) => {
-  if (message === null) {
-    return null
-  }
-  return <div className="notification">{message}</div>
-}
+import { useContext } from "react";
+import NotificationContext from "../contexts/NotificationContext";
 
-export const ErrorMessage = ({ message }) => {
-  if (message === null) {
-    return null
+export const Notification = () => {
+  const [notification, notificationDispatch] = useContext(NotificationContext);
+  if (notification === null) {
+    return null;
   }
-  return <div className="error">{message}</div>
-}
+  return <div className="notification">{notification}</div>;
+};
+
+// export const ErrorMessage = () => {
+//   const [notification, notificationDispatch] = useContext(NotificationContext);
+//   if (notification === null) {
+//     return null;
+//   }
+//   return <div className="error">{notification}</div>;
+// };

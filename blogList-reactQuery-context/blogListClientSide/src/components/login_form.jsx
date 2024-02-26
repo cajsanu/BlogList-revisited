@@ -1,22 +1,67 @@
-import { useState } from 'react'
-import PropTypes from 'prop-types'
+import { useState, useEffect, useContext } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import blogRequests from "../requests/blogs";
+import loginRequests from "../requests/login";
+import NotificationContext from "../contexts/NotificationContext";
+import UserContext from "../contexts/UserContext";
 
-const LoginForm = ({ createUser }) => {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
+const LoginForm = () => {
+  const [notification, notificationDispatch] = useContext(NotificationContext);
+  const [user, userDispatch] = useContext(UserContext);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const addUser = (event) => {
-    event.preventDefault()
-    createUser({ username: username, password: password })
-    setUsername('')
-    setPassword('')
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
+    console.log(loggedUserJSON);
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      userDispatch({ type: "SETUSER", payload: user });
+      blogRequests.setToken(user.token);
+    }
+  }, user);
+
+  const newLoginMutation = useMutation({
+    mutationFn: loginRequests.login,
+    onSuccess: (user) => {
+      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+      blogRequests.setToken(user.token);
+      userDispatch({ type: "SETUSER", payload: data });
+      notificationDispatch({ type: "LOGIN", payload: userObject.username });
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+    onError: () => {
+      if (error.response.status === 401) {
+        notificationDispatch({
+          type: "ERROR",
+          payload: "Wrong username or password",
+        });
+      } else {
+        console.error("Login error:", error.message);
+      }
+    },
+  });
+
+  if (newLoginMutation.isLoading) {
+    return <h1>Wait...</h1>;
   }
+
+  const addUser = async (event) => {
+    event.preventDefault();
+    const userObject = { username: username, password: password };
+    newLoginMutation.mutate(userObject);
+    console.log("logging in with", userObject.username, userObject.password);
+    setUsername("");
+    setPassword("");
+  };
 
   return (
     <div>
       <form onSubmit={addUser}>
         <div>
-            username
+          username
           <input
             type="text"
             id="username"
@@ -25,7 +70,7 @@ const LoginForm = ({ createUser }) => {
           />
         </div>
         <div>
-            password
+          password
           <input
             type="password"
             id="password"
@@ -33,14 +78,12 @@ const LoginForm = ({ createUser }) => {
             onChange={(event) => setPassword(event.target.value)}
           />
         </div>
-        <button type="submit" id="login-button">Login</button>
+        <button type="submit" id="login-button">
+          Login
+        </button>
       </form>
     </div>
-  )
-}
+  );
+};
 
-LoginForm.propTypes = {
-  createUser: PropTypes.func.isRequired,
-}
-
-export default LoginForm
+export default LoginForm;
