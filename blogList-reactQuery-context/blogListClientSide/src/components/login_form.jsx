@@ -26,9 +26,10 @@ const LoginForm = () => {
   const newLoginMutation = useMutation({
     mutationFn: loginRequests.login,
     onSuccess: (user) => {
+      console.log(user)
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       blogRequests.setToken(user.token);
-      userDispatch({ type: "SETUSER", payload: data });
+      userDispatch({ type: "SETUSER", payload: user });
       notificationDispatch({ type: "LOGIN", payload: userObject.username });
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
     },

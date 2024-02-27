@@ -89,7 +89,6 @@ const Blogs = ({ username }) => {
 
   return (
     <div>
-      <h3>Blogs</h3>
       <ul>
         {blogs.map((blog) => (
           <Blog

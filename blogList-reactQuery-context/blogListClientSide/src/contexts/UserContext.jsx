@@ -3,7 +3,7 @@ import { createContext, useReducer, useEffect } from "react";
 const UserReducer = (state, action) => {
   switch (action.type) {
     case "SETUSER":
-        return action.payload
+      return action.payload;
     case "CLEAR":
       return null;
     default:
@@ -14,17 +14,7 @@ const UserReducer = (state, action) => {
 const UserContext = createContext();
 
 export const UserContextProvider = (props) => {
-  const [user, userDispatch] = useReducer(
-    UserReducer,
-    null
-  );
-
-//   useEffect(() => {
-//     const timeout = setTimeout(() => {
-//       notificationDispatch({ type: "CLEAR" });
-//     }, 5000);
-//     return () => clearTimeout(timeout);
-//   }, [notification]);
+  const [user, userDispatch] = useReducer(UserReducer, null);
 
   return (
     <UserContext.Provider value={[user, userDispatch]}>
