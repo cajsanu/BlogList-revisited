@@ -33,7 +33,7 @@ function App() {
             >
               <BlogForm />
             </Togglable>
-            <Blogs username={user.username} />
+            <Blogs />
           </div>
         )}
       </div>

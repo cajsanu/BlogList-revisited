@@ -7,6 +7,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Homepage from "./routes/Homepage.jsx";
 import UsersPage from "./routes/UsersPage.jsx";
 import SingleUserPage from "./routes/SingleUserPage.jsx";
+import SingleBlogPage from "./routes/SingleBlogPage.jsx"
 import ErrorPage from "./routes/ErrorPage.jsx";
 import "./index.css";
 
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
     path: "/users/:id",
     element: <SingleUserPage />,
   },
+  {
+    path: "/blogs/:id",
+    element: <SingleBlogPage />
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(

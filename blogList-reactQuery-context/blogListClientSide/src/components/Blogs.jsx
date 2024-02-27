@@ -1,8 +1,6 @@
-import { useContext } from "react";
-import { Button, Togglable } from ".";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import NotificationContext from "../contexts/NotificationContext";
+import { useQuery } from "@tanstack/react-query";
 import blogRequests from "../requests/blogs";
+import { Link } from "react-router-dom"; 
 
 const Blog = (props) => {
   const blogStyle = {
@@ -15,47 +13,15 @@ const Blog = (props) => {
   return (
     <div style={blogStyle} className="Blog">
       <div>
-        <>
+        <Link to={`/blogs/${props.id}`}>
           {props.title} by {props.author}
-        </>
-      </div>
-      <div>
-        <Togglable showContent="View" hideContent="Hide">
-          <p>
-            {props.url} - {props.likes} likes{" "}
-            <Button onClick={props.onLikeClick} text="Like" />
-          </p>
-          <p>{props.user}</p>
-          {props.children}
-        </Togglable>
+        </Link>
       </div>
     </div>
   );
 };
 
-const Blogs = ({ username }) => {
-  const [notification, notificationDispatch] = useContext(NotificationContext);
-  const queryClient = useQueryClient();
-
-  const DeleteBlogMutation = useMutation({
-    mutationFn: blogRequests.deleteBlog,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["blogs"] });
-    },
-    onError: () => {
-      notificationDispatch({ type: "ERROR", payload: "Cannot delete blog" });
-    },
-  });
-
-  const LikeBlogMutation = useMutation({
-    mutationFn: blogRequests.updateLikes,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["blogs"] });
-    },
-    onError: () => {
-      notificationDispatch({ type: "ERROR", payload: "Cannot like blog" });
-    },
-  });
+const Blogs = () => {
 
   const getAllBlogs = useQuery({
     queryKey: ["blogs"],
@@ -73,36 +39,19 @@ const Blogs = ({ username }) => {
     return b.likes - a.likes;
   });
 
-  const handleDelete = (blog) => {
-    if (
-      window.confirm(`Do you want to delete ${blog.title} by ${blog.author}`)
-    ) {
-      DeleteBlogMutation.mutate(blog.id);
-      notificationDispatch({ type: "DELETE", payload: blog.title });
-    }
-  };
-
-  const handleLike = (blog) => {
-    LikeBlogMutation.mutate(blog.id);
-    notificationDispatch({ type: "LIKE", payload: blog.title });
-  };
-
   return (
     <div>
       <ul>
         {blogs.map((blog) => (
           <Blog
             key={blog.id}
+            id={blog.id}
             author={blog.author}
             title={blog.title}
             url={blog.url}
             likes={blog.likes}
             user={blog.user.name}
-            onLikeClick={() => handleLike(blog)}
           >
-            {username === blog.user.username ? (
-              <Button onClick={() => handleDelete(blog)} text={"Delete"} />
-            ) : null}
           </Blog>
         ))}
       </ul>

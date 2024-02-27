@@ -44,6 +44,7 @@ const Users = () => {
           ))}
         </tbody>
       </table>
+      <Link to="/"><button>View blogs</button></Link>
     </div>
   );
 };
