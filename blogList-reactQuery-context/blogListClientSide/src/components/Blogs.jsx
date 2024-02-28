@@ -1,28 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 import blogRequests from "../requests/blogs";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
+import Table from "react-bootstrap/Table";
 
 const Blog = (props) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: "solid",
-    borderWidth: 1,
-    marginBottom: 5,
-  };
   return (
-    <div style={blogStyle} className="Blog">
-      <div>
+    <tr>
+      <td>
         <Link to={`/blogs/${props.id}`}>
           {props.title} by {props.author}
         </Link>
-      </div>
-    </div>
+      </td>
+    </tr>
   );
 };
 
 const Blogs = () => {
-
   const getAllBlogs = useQuery({
     queryKey: ["blogs"],
     queryFn: blogRequests.getAll,
@@ -41,20 +34,21 @@ const Blogs = () => {
 
   return (
     <div>
-      <ul>
-        {blogs.map((blog) => (
-          <Blog
-            key={blog.id}
-            id={blog.id}
-            author={blog.author}
-            title={blog.title}
-            url={blog.url}
-            likes={blog.likes}
-            user={blog.user.name}
-          >
-          </Blog>
-        ))}
-      </ul>
+      <Table striped>
+        <tbody>
+          {blogs.map((blog) => (
+            <Blog
+              key={blog.id}
+              id={blog.id}
+              author={blog.author}
+              title={blog.title}
+              url={blog.url}
+              likes={blog.likes}
+              user={blog.user.name}
+            ></Blog>
+          ))}
+        </tbody>
+      </Table>
     </div>
   );
 };

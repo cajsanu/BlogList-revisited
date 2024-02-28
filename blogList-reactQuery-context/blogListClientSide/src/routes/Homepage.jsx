@@ -10,13 +10,17 @@ import {
 import Header from "../components/Header";
 import UserContext from "../contexts/UserContext";
 import { Link } from "react-router-dom";
+import { useSetUser } from "../hooks";
+import { Button } from "react-bootstrap";
 
 function App() {
   const [user, userDispatch] = useContext(UserContext);
   const blogFormRef = useRef();
 
+  useSetUser()
+
   return (
-    <div>
+    <div className="container">
       <Notification />
       <Header />
       <div>
@@ -38,7 +42,7 @@ function App() {
         )}
       </div>
       <Link to={"/users"}>
-        <button> View users</button>
+        <Button> View users</Button>
       </Link>
     </div>
   );

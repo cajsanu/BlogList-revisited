@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import NotificationContext from "../contexts/NotificationContext";
 import blogRequests from "../requests/blogs";
+import { Form, Button } from "react-bootstrap";
 
 const BlogForm = () => {
   const [notification, notificationDispatch] = useContext(NotificationContext);
@@ -25,7 +26,7 @@ const BlogForm = () => {
   const addBlog = (event) => {
     event.preventDefault();
     const blogObject = { title: blogTitle, author: blogAuthor, url: blogUrl };
-    newBlogMutation.mutate(blogObject)
+    newBlogMutation.mutate(blogObject);
 
     setBlogTitle("");
     setBlogAuthor("");
@@ -35,41 +36,39 @@ const BlogForm = () => {
   return (
     <div>
       <h2>Create a new blog</h2>
-      <form onSubmit={addBlog}>
-        <div>
-          <div>
-            title
-            <input
-              type="text"
-              placeholder="Blog title"
-              id="title"
-              value={blogTitle}
-              onChange={(event) => setBlogTitle(event.target.value)}
-            />
-          </div>
-          <div>
-            author
-            <input
-              type="text"
-              placeholder="Blog author"
-              id="author"
-              value={blogAuthor}
-              onChange={(event) => setBlogAuthor(event.target.value)}
-            />
-          </div>
-          <div>
-            URL
-            <input
-              type="text"
-              placeholder="Blog url"
-              id="URL"
-              value={blogUrl}
-              onChange={(event) => setBlogUrl(event.target.value)}
-            />
-          </div>
-        </div>
-        <button type="submit">Save</button>
-      </form>
+      <Form onSubmit={addBlog}>
+        <Form.Group>
+          <Form.Label>Title</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Blog title"
+            id="title"
+            value={blogTitle}
+            onChange={(event) => setBlogTitle(event.target.value)}
+          />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>Author</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Blog author"
+            id="author"
+            value={blogAuthor}
+            onChange={(event) => setBlogAuthor(event.target.value)}
+          />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>URL</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Blog url"
+            id="URL"
+            value={blogUrl}
+            onChange={(event) => setBlogUrl(event.target.value)}
+          />
+        </Form.Group>
+        <Button variant="primary" type="submit">Save</Button>
+      </Form>
     </div>
   );
 };

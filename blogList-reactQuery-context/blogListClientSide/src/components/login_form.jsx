@@ -4,6 +4,7 @@ import blogRequests from "../requests/blogs";
 import loginRequests from "../requests/login";
 import NotificationContext from "../contexts/NotificationContext";
 import UserContext from "../contexts/UserContext";
+import { Form, Button } from "react-bootstrap";
 
 const LoginForm = () => {
   const [notification, notificationDispatch] = useContext(NotificationContext);
@@ -13,27 +14,19 @@ const LoginForm = () => {
 
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
-    console.log(loggedUserJSON);
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      userDispatch({ type: "SETUSER", payload: user });
-      blogRequests.setToken(user.token);
-    }
-  }, user);
-
   const newLoginMutation = useMutation({
     mutationFn: loginRequests.login,
     onSuccess: (user) => {
-      console.log(user)
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       blogRequests.setToken(user.token);
       userDispatch({ type: "SETUSER", payload: user });
-      notificationDispatch({ type: "LOGIN", payload: userObject.username });
+      notificationDispatch({
+        type: "LOGIN",
+        payload: user.username,
+      });
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
     },
-    onError: () => {
+    onError: (error) => {
       if (error.response.status === 401) {
         notificationDispatch({
           type: "ERROR",
@@ -49,7 +42,7 @@ const LoginForm = () => {
     return <h1>Wait...</h1>;
   }
 
-  const addUser = async (event) => {
+  const addUser = (event) => {
     event.preventDefault();
     const userObject = { username: username, password: password };
     newLoginMutation.mutate(userObject);
@@ -60,29 +53,29 @@ const LoginForm = () => {
 
   return (
     <div>
-      <form onSubmit={addUser}>
-        <div>
-          username
-          <input
+      <Form onSubmit={addUser}>
+        <Form.Group>
+          <Form.Label>Username</Form.Label>
+          <Form.Control
             type="text"
             id="username"
             value={username}
             onChange={(event) => setUsername(event.target.value)}
           />
-        </div>
-        <div>
-          password
-          <input
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>Password</Form.Label>
+          <Form.Control
             type="password"
             id="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
           />
-        </div>
-        <button type="submit" id="login-button">
+        </Form.Group>
+        <Button type="submit" id="login-button">
           Login
-        </button>
-      </form>
+        </Button>
+      </Form>
     </div>
   );
 };

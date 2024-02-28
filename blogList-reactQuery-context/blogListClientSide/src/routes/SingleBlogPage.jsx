@@ -4,20 +4,24 @@ import blogRequests from "../requests/blogs";
 import Header from "../components/Header";
 import NotificationContext from "../contexts/NotificationContext";
 import { useContext } from "react";
-import { Button, Notification } from "../components";
+import { Notification, CommentForm } from "../components";
+import { useSetUser } from "../hooks";
+import { Button } from "react-bootstrap";
+
 
 const Blog = () => {
   const params = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [notification, notificationDispatch] = useContext(NotificationContext);
 
   const queryClient = useQueryClient();
+  useSetUser()
 
   const DeleteBlogMutation = useMutation({
     mutationFn: blogRequests.deleteBlog,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["blogs"] });
-      navigate("/")
+      navigate("/");
     },
     onError: () => {
       notificationDispatch({ type: "ERROR", payload: "Cannot delete blog" });
@@ -48,7 +52,6 @@ const Blog = () => {
   }
   const blogs = getAllBlogs.data;
   const blog = blogs.find((blog) => blog.id === params.id);
-  console.log(blog);
 
   const handleDelete = (blog) => {
     if (
@@ -67,6 +70,7 @@ const Blog = () => {
   const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
   const user = JSON.parse(loggedUserJSON);
 
+
   return (
     <div>
       <Notification />
@@ -78,12 +82,19 @@ const Blog = () => {
         </p>
         <p>
           {blog.likes} likes
-          <Button onClick={() => handleLike(blog)} text="Like" />
+          <Button onClick={() => handleLike(blog)}>Like</Button>
         </p>
       </div>
       {user.username === blog.user.username ? (
-        <Button onClick={() => handleDelete(blog)} text={"Delete"} />
+        <div>
+          <p>added by {blog.user.name}</p>
+          <Button onClick={() => handleDelete(blog)}>Delete</Button>
+        </div>
       ) : null}
+      <CommentForm id={blog.id}/>
+      {blog.comments.map((comment) => {
+        return <li key={comment}>{comment}</li>;
+      })}
     </div>
   );
 };

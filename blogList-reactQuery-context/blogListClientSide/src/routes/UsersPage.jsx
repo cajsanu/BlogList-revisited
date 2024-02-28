@@ -1,12 +1,18 @@
 import userRequests from "../requests/users";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import Header from "../components/Header";
+import { useSetUser } from "../hooks";
+import { Button } from "react-bootstrap";
 
 const User = ({ user }) => {
   return (
     <tr>
-      <td><Link key={user.name} to={`/users/${user.id}`}>{user.name}</Link></td>
+      <td>
+        <Link key={user.name} to={`/users/${user.id}`}>
+          {user.name}
+        </Link>
+      </td>
       <td>{user.blogs.length}</td>
     </tr>
   );
@@ -15,8 +21,10 @@ const User = ({ user }) => {
 const Users = () => {
   const style = {
     display: "flex",
-    "justify-content": "center",
+    justifyContent: "center",
   };
+
+  useSetUser();
 
   const getAllUsers = useQuery({
     queryKey: ["users"],
@@ -44,7 +52,9 @@ const Users = () => {
           ))}
         </tbody>
       </table>
-      <Link to="/"><button>View blogs</button></Link>
+      <Link to="/">
+        <Button>View blogs</Button>
+      </Link>
     </div>
   );
 };

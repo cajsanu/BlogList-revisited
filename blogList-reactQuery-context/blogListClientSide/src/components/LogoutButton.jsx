@@ -1,8 +1,8 @@
-import Button from "./Button";
 import { useContext } from "react"; 
 import UserContext from "../contexts/UserContext";
 import NotificationContext from "../contexts/NotificationContext";
 import { useNavigate } from "react-router-dom"; 
+import { Button } from "react-bootstrap";
 
 const LogoutButton = () => {
   const [user, userDispatch] = useContext(UserContext);
@@ -17,7 +17,7 @@ const LogoutButton = () => {
     console.log("Logging out");
   };
 
-  return <Button onClick={handleLogout} text={"Log out"} />;
+  return <Button onClick={handleLogout} text={"Log out"} >Log out</Button>;
 };
 
 export default LogoutButton;

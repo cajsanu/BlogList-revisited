@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import userRequests from "../requests/users";
 import Header from "../components/Header";
+import { useSetUser } from "../hooks";
 
 const BlogOfUser = ({ blog }) => {
   return <li>{blog.title}</li>;
@@ -9,7 +10,8 @@ const BlogOfUser = ({ blog }) => {
 
 const User = () => {
   const params = useParams();
-  console.log(params);
+  
+  useSetUser()
 
   const getAllUsers = useQuery({
     queryKey: ["users"],
